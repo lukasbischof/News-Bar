@@ -106,7 +106,13 @@
 				
 				var days = (hours / 24).toFixed(0);
 				
-				return days + " t";
+				if (days < 7) {
+					return days + " t";
+				}
+				
+				var weeks = (days / 7).toFixed(0);
+				
+				return weeks + " w";
 			}
 
 			function loop() {
