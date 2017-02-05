@@ -56,6 +56,15 @@
 
 						messages = ret;
 						
+						for (var i in messages) {
+							var message = messages[i];
+							message.date = new Date(message.date);
+						}
+						
+						messages.sort(function(a, b) {
+							return b.date.getTime() - a.date.getTime();
+						});
+						
 						callback();
 					}
 				};
@@ -74,6 +83,31 @@
 				
 				return iconInfo.url;
 			}
+			
+			function getTimeString(date) {
+				var delta = (new Date).getTime() - date.getTime();
+				var secs = (delta / 1000).toFixed(0);
+				
+				if (secs < 60) {
+					return secs + " s";
+				}
+				
+				var min = (secs / 60).toFixed(0);
+				
+				if (min < 60) {
+					return min + " min";
+				}
+				
+				var hours = (min / 60).toFixed(0);
+				
+				if (hours < 24) {
+					return hours + " std";
+				}
+				
+				var days = (hours / 24).toFixed(0);
+				
+				return days + " t";
+			}
 
 			function loop() {
 				currIndex = ++currIndex % messages.length;
@@ -84,9 +118,6 @@
 
 				var newContent = document.createElement("div");
 				newContent.className = "content";
-
-				var title = document.createElement("b");
-				title.appendChild(document.createTextNode(newMessage.src + " "));
 				
 				var iconInformation = newMessage.icon;
 				var icon = document.createElement("img");
@@ -98,9 +129,13 @@
 				icon.style.verticalAlign = "-8%";
 				icon.style.opacity = 0.7;
 				
+				var time = document.createElement("i");
+				time.appendChild(document.createTextNode("\t(" + getTimeString(newMessage.date) + ")"));
+				time.style.color = "gray";
+				
 				newContent.appendChild(icon);
-				//newContent.appendChild(title);
 				newContent.appendChild(document.createTextNode("\t" + newMessage.title));
+				newContent.appendChild(time);
 
 				newDisplay.appendChild(newContent);
 
