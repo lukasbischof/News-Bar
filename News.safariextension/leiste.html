@@ -77,9 +77,19 @@
 
 				var title = document.createElement("b");
 				title.appendChild(document.createTextNode(newMessage.src + " "));
-				newContent.appendChild(title);
-
-				newContent.appendChild(document.createTextNode(newMessage.title));
+				
+				var iconInformation = newMessage.icon;
+				var icon = document.createElement("img");
+				icon.src = iconInformation.url;
+				icon.width = iconInformation.width;
+				icon.height = iconInformation.height;
+				icon.alt = iconInformation.alt;
+				icon.style.verticalAlign = "-8%";
+				icon.style.opacity = 0.7;
+				
+				newContent.appendChild(icon);
+				//newContent.appendChild(title);
+				newContent.appendChild(document.createTextNode("\t" + newMessage.title));
 
 				newDisplay.appendChild(newContent);
 
