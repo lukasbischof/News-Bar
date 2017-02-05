@@ -37,6 +37,8 @@
 			var currIndex = 0;
 
 			function process() {
+				window.devicePixelRatio = window.devicePixelRatio || 1;
+				
 				reload(function() {
 					loop();
 					setInterval(loop, 9200);
@@ -64,6 +66,14 @@
 
 				xml.send();
 			}
+			
+			function getIconSrc(iconInfo) {
+				if (window.devicePixelRatio == 2) {
+					return iconInfo.url2;
+				}
+				
+				return iconInfo.url;
+			}
 
 			function loop() {
 				currIndex = ++currIndex % messages.length;
@@ -80,10 +90,11 @@
 				
 				var iconInformation = newMessage.icon;
 				var icon = document.createElement("img");
-				icon.src = iconInformation.url;
+				icon.src = getIconSrc(iconInformation);
 				icon.width = iconInformation.width;
 				icon.height = iconInformation.height;
 				icon.alt = iconInformation.alt;
+				icon.title = iconInformation.alt;
 				icon.style.verticalAlign = "-8%";
 				icon.style.opacity = 0.7;
 				
