@@ -112,9 +112,27 @@
 		loadRSS($ret, 'http://www.cnbc.com/id/100727362/device/rss/rss.html', $info);
 	}
 	
+	// Tagi
+	function getTagesanzeiger() {
+		global $ret;
+		$info = array(
+			'src' => 'Tagesanzeiger',
+			'icon' => array(
+				'url' => iconName('tagi.png'),
+				'url2' => iconName('tagi@2x.png'),
+				'width' => 55,
+				'height' => 11,
+				'alt' => 'Tagesanzeiger'
+			)
+		);
+		
+		loadRSS($ret, 'http://www.tagesanzeiger.ch/rss_ticker.html', $info);
+	}
+	
 	getNZZ();
 	getAdmin();
 	getCNBC();
+	getTagesanzeiger();
 	
 	echo json_encode($ret);
 ?>
