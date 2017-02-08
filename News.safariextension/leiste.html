@@ -35,6 +35,15 @@
 		<script type="text/javascript">
 			var messages = [];
 			var currIndex = 0;
+			var maxAge = safari.extension.settings.timeSpan || "1d";
+			
+			safari.extension.settings.addEventListener("change", function(e) {
+				if (e.key == "timeSpan") {
+					maxAge = e.newValue;
+					
+					reload();
+				}
+			}, false);
 
 			function process() {
 				window.devicePixelRatio = window.devicePixelRatio || 1;
@@ -48,7 +57,7 @@
 			
 			function reload(callback) {
 				var xml = new XMLHttpRequest();
-				xml.open("GET", "http://aseider.pf-control.de/newsAPI/", true);
+				xml.open("GET", "http://aseider.pf-control.de/newsAPI/?maxAge=" + (maxAge || "1d"), true);
 				xml.setRequestHeader('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 NewsBar/602.2.14');
 				xml.onreadystatechange = function() {
 					if (xml.readyState == 4) {
@@ -65,7 +74,8 @@
 							return b.date.getTime() - a.date.getTime();
 						});
 						
-						callback();
+						if (callback)
+							callback();
 					}
 				};
 				
@@ -116,11 +126,27 @@
 			}
 
 			function loop() {
-				currIndex = ++currIndex % messages.length;
-				var newMessage = messages[currIndex];
 				var newDisplay = document.createElement("div");
 				newDisplay.className = "display";
 				newDisplay.style.top = "100%";
+				
+				if (messages.length == 0) {
+					document.body.innerHTML = ""; // remove all messages
+					newDisplay.style.top = 0; // no animation will take place
+					
+					var newContent = document.createElement("div");
+					newContent.className = "content";
+					newContent.appendChild(document.createTextNode("No messages to display"));
+					newContent.style.color = "#222";
+					
+					newDisplay.appendChild(newContent);
+					document.body.appendChild(newDisplay);
+					
+					return;
+				}
+				
+				currIndex = ++currIndex % messages.length;
+				var newMessage = messages[currIndex];
 
 				var newContent = document.createElement("div");
 				newContent.className = "content";
@@ -140,7 +166,8 @@
 				time.style.color = "gray";
 				
 				newContent.appendChild(icon);
-				newContent.appendChild(document.createTextNode("\t" + newMessage.title));
+				newContent.innerHTML += "&nbsp;";
+				newContent.appendChild(document.createTextNode("\t " + newMessage.title));
 				newContent.appendChild(time);
 
 				newDisplay.appendChild(newContent);

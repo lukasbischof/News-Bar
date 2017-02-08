@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>DefaultValue</key>
+		<string>1d</string>
+		<key>Key</key>
+		<string>timeSpan</string>
+		<key>Title</key>
+		<string>Maximales Alter der Beiträge</string>
+		<key>Titles</key>
+		<array>
+			<string>Ein Tag</string>
+			<string>Zwei Tage</string>
+			<string>Drei Tage</string>
+			<string>Eine Woche</string>
+			<string>Keine Einschränkungen</string>
+		</array>
+		<key>Type</key>
+		<string>PopUpButton</string>
+		<key>Values</key>
+		<array>
+			<string>1d</string>
+			<string>2d</string>
+			<string>3d</string>
+			<string>1w</string>
+			<string>n</string>
+		</array>
+	</dict>
+</array>
+</plist>
