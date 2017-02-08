@@ -1,5 +1,5 @@
 <?php
-	function loadRSS(&$ret, $url, $info) {
+	function loadRSS(&$ret, $url, $info, $maxAge) {
 		$xmlDoc = new DOMDocument();
 		$xmlDoc->load($url);
 		
@@ -17,9 +17,15 @@
 			$item_desc = $x->item($i)->getElementsByTagName('description')->item(0)->childNodes->item(0)->nodeValue;
 			$item_date = $x->item($i)->getElementsByTagName('pubDate')->item(0)->childNodes->item(0)->nodeValue;
 			
+			$timestamp = strtotime($item_date);
+			if ((time() - $maxAge) > $timestamp) {
+				continue;
+			}
+			
 			$ret[] = array(
 			    'src' => $info['src'],
 			    'title' => $item_title,
+			    'desc' => $item_desc,
 			    'url' => $item_link,
 			    'icon' => $info['icon'],
 			    'date' => $item_date

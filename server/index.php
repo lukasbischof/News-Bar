@@ -1,17 +1,46 @@
 <?php
 	error_reporting(0);
+	date_default_timezone_set('Europe/Zurich');
 	
 	include_once 'rss.php';
+	
+	$maxAge = '1d';
+	if (isset($_GET['maxAge'])) {
+		$maxAge = $_GET['maxAge'];
+	}
+	
+	$oneDay = 60 * 60 * 24;
+	switch ($maxAge) {
+		case '1d':
+			$maxAge = $oneDay;
+			break;
+			
+		case '2d':
+			$maxAge = 2 * $oneDay;
+			break;
+			
+		case '3d':
+			$maxAge = 3 * $oneDay;
+			break;
+			
+		case '1w':
+			$maxAge = 7 * $oneDay;
+			break;
+			
+		default:
+			$maxAge = PHP_INT_MAX;
+			break;
+	}
 	
 	$ret = array();
 	
 	function iconName($name) {
-		return 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "icons/$name";
+		return 'http://' . $_SERVER['SERVER_NAME'] . explode('?', $_SERVER['REQUEST_URI'])[0] . "icons/$name";
 	}
 	
 	// NZZ
 	function getNZZ() {
-		global $ret;
+		global $ret, $maxAge;
 		
 		$site = file_get_contents('https://www.nzz.ch/briefing/');
 		if ($site === false) {
@@ -35,6 +64,11 @@
 			$date = $date->getAttribute('datetime');
 		} else {
 			$date = date('D M d Y H:i:s O');
+		}
+		
+		$timestamp = strtotime($date);
+		if ((time() - $maxAge) > $timestamp) {
+			return;
 		}
 		
 		$content = $main->getElementsByTagName('p');
@@ -78,7 +112,7 @@
 	
 	// admin
 	function getAdmin() {
-		global $ret;
+		global $ret, $maxAge;
 		
 		$info = array(
 			'src' => 'Admin',
@@ -91,12 +125,12 @@
 			)
 		);
 		
-		loadRSS($ret, 'https://www.newsd.admin.ch/newsd/feeds/rss?lang=de&org-nr=1&topicword=&offer-nr=&catalogueElement=&kind=M,R&start_date=2017-02-02&end_date=', $info);
+		loadRSS($ret, 'https://www.newsd.admin.ch/newsd/feeds/rss?lang=de&org-nr=1&topicword=&offer-nr=&catalogueElement=&kind=M,R&start_date=2017-02-02&end_date=', $info, $maxAge);
 	}
 	
 	// NBC
 	function getCNBC() {
-		global $ret;
+		global $ret, $maxAge;
 		
 		$info = array(
 			'src' => 'CNBC',
@@ -109,12 +143,12 @@
 			)
 		);
 		
-		loadRSS($ret, 'http://www.cnbc.com/id/100727362/device/rss/rss.html', $info);
+		loadRSS($ret, 'http://www.cnbc.com/id/100727362/device/rss/rss.html', $info, $maxAge);
 	}
 	
 	// Tagi
 	function getTagesanzeiger() {
-		global $ret;
+		global $ret, $maxAge;
 		$info = array(
 			'src' => 'Tagesanzeiger',
 			'icon' => array(
@@ -126,7 +160,7 @@
 			)
 		);
 		
-		loadRSS($ret, 'http://www.tagesanzeiger.ch/rss_ticker.html', $info);
+		loadRSS($ret, 'http://www.tagesanzeiger.ch/rss_ticker.html', $info, $maxAge);
 	}
 	
 	getNZZ();
