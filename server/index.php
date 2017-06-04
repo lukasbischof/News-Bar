@@ -42,7 +42,14 @@
 	function getNZZ() {
 		global $ret, $maxAge;
 		
-		$site = file_get_contents('https://www.nzz.ch/briefing/');
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, "https://www.nzz.ch/briefing/");
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		
+		$site = curl_exec($ch);
+		curl_close($ch);
+		
 		if ($site === false) {
 			die('{error: "can\'t load NZZ site"}');
 		}
